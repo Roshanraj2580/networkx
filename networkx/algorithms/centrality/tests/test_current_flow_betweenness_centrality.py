@@ -82,8 +82,14 @@ class TestFlowBetweennessCentrality:
         assert nx.current_flow_betweenness_centrality(G1, normalized=False) == {0: 0.0}
 
         G2 = nx.complete_graph(2)
-        assert nx.current_flow_betweenness_centrality(G2, normalized=True) == {0: 0.0, 1: 0.0}
-        assert nx.current_flow_betweenness_centrality(G2, normalized=False) == {0: 0.0, 1: 0.0}
+        assert nx.current_flow_betweenness_centrality(G2, normalized=True) == {
+            0: 0.0,
+            1: 0.0,
+        }
+        assert nx.current_flow_betweenness_centrality(G2, normalized=False) == {
+            0: 0.0,
+            1: 0.0,
+        }
 
 
 class TestApproximateFlowBetweennessCentrality:
