@@ -83,6 +83,27 @@ class TestFlowBetweennessCentrality:
         for n in sorted(G):
             assert b[n] == pytest.approx(b_answer[n], abs=1e-7)
 
+    def test_small_graph(self):
+        G1 = nx.complete_graph(1)
+        b1_norm = nx.current_flow_betweenness_centrality_subset(
+            G1, list(G1), list(G1), normalized=True
+        )
+        b1_unnorm = nx.current_flow_betweenness_centrality_subset(
+            G1, list(G1), list(G1), normalized=False
+        )
+        assert b1_norm == {0: 0.0}
+        assert b1_unnorm == {0: 0.0}
+
+        G2 = nx.complete_graph(2)
+        b2_norm = nx.current_flow_betweenness_centrality_subset(
+            G2, list(G2), list(G2), normalized=True
+        )
+        b2_unnorm = nx.current_flow_betweenness_centrality_subset(
+            G2, list(G2), list(G2), normalized=False
+        )
+        assert b2_norm == {0: 0.0, 1: 0.0}
+        assert b2_unnorm == {0: 0.0, 1: 0.0}
+
 
 # class TestWeightedFlowBetweennessCentrality():
 #     pass
@@ -145,3 +166,14 @@ class TestEdgeFlowBetweennessCentrality:
         for (s, t), v1 in b_answer.items():
             v2 = b.get((s, t), b.get((t, s)))
             assert v1 == pytest.approx(v2, abs=1e-7)
+
+    def test_small_graph(self):
+        G1 = nx.complete_graph(1)
+        assert edge_current_flow_subset(G1, list(G1), list(G1), normalized=True) == {}
+        assert edge_current_flow_subset(G1, list(G1), list(G1), normalized=False) == {}
+
+        G2 = nx.complete_graph(2)
+        res_norm = edge_current_flow_subset(G2, list(G2), list(G2), normalized=True)
+        res_unnorm = edge_current_flow_subset(G2, list(G2), list(G2), normalized=False)
+        assert res_norm.get((0, 1), res_norm.get((1, 0))) == 1.0
+        assert res_unnorm.get((0, 1), res_unnorm.get((1, 0))) == 0.5

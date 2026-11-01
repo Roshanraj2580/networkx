@@ -96,6 +96,8 @@ def current_flow_betweenness_centrality_subset(
     if not nx.is_connected(G):
         raise nx.NetworkXError("Graph not connected.")
     N = G.number_of_nodes()
+    if N < 3:
+        return dict.fromkeys(G, 0.0)
     ordering = list(reverse_cuthill_mckee_ordering(G))
     # make a copy with integer labels according to rcm ordering
     # this could be done without a copy if we really wanted to
@@ -110,7 +112,7 @@ def current_flow_betweenness_centrality_subset(
                 betweenness[s] += 0.5 * abs(row.item(i) - row.item(j))
                 betweenness[t] += 0.5 * abs(row.item(i) - row.item(j))
     if normalized:
-        nb = (N - 1.0) * (N - 2.0)  # normalization factor
+        nb = (N - 1.0) * (N - 2.0) if N > 2 else 1.0
     else:
         nb = 2.0
     for node in H:
@@ -202,6 +204,8 @@ def edge_current_flow_betweenness_centrality_subset(
     if not nx.is_connected(G):
         raise nx.NetworkXError("Graph not connected.")
     N = G.number_of_nodes()
+    if N < 2:
+        return {}
     ordering = list(reverse_cuthill_mckee_ordering(G))
     # make a copy with integer labels according to rcm ordering
     # this could be done without a copy if we really wanted to
@@ -210,7 +214,7 @@ def edge_current_flow_betweenness_centrality_subset(
     edges = (tuple(sorted((u, v))) for u, v in H.edges())
     betweenness = dict.fromkeys(edges, 0.0)
     if normalized:
-        nb = (N - 1.0) * (N - 2.0)  # normalization factor
+        nb = (N - 1.0) * (N - 2.0) if N > 2 else 1.0
     else:
         nb = 2.0
     for row, (e) in flow_matrix_row(H, weight=weight, dtype=dtype, solver=solver):
